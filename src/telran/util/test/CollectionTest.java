@@ -42,7 +42,5 @@ public abstract class CollectionTest {
 			assertTrue(!collection.remove(removed));
 			assertArrayEquals(arrayBefore, getArray());
 		}
-		
 	}
-
 }

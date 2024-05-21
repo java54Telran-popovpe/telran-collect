@@ -10,7 +10,7 @@ import org.junit.jupiter.api.*;
 import telran.util.List;
 
 public abstract class ListTest extends CollectionTest {
-	protected List<Integer> list; //{ -20, 10, 1, 100, -5}
+	protected List<Integer> list; 
 	
 	@BeforeEach
 	@Override
