@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +20,48 @@ public abstract class CollectionTest {
 			collection.add(num);
 		}
 	}
+	@Test
+	@DisplayName(value = "Collection::size()")
+	void sizeMethodTest() {
+		assertEquals(5, collection.size());
+	}
 	
+	@Test
+	@DisplayName(value="Collection::contains(object)")
+	void containsMethodTest() {
+		assertTrue( collection.contains(10) );
+		assertTrue(!collection.contains(-3));
+	}
+	
+	@Test
+	@DisplayName(value="Collection::remove(object)")
+	void removeMethodTest() {
+		runRemoveTest(new Integer[]{-20, 10, 100, -5}, 1);
+		runRemoveTest(new Integer[]{-20, 10, 100, -5}, -4);
+		runRemoveTest(new Integer[]{-20, 10, 100,}, -5);
+		runRemoveTest(new Integer[]{10, 100,}, -20);
+		runRemoveTest(new Integer[]{ 100,}, 10);
+		runRemoveTest(new Integer[]{}, 100);
+		runRemoveTest(new Integer[]{}, 100);
+		assertEquals(0, collection.size());
+		assertTrue(!collection.contains(100));
+	}
+	@Test
+	@DisplayName(value="Collection::add(object)")
+	void addObjectTest() {
+		for ( int count = 0; count < 3; count++ )
+			for( Integer i: new Integer[]{  -20, 10, 1, 100, -5, }) 
+				collection.add(i);
+		assertArrayEquals(new Integer[]{  	-20, 10, 1, 100, -5, 
+											-20, 10, 1, 100, -5, 
+											-20, 10, 1, 100, -5, 
+											-20, 10, 1, 100, -5,},
+				getArray());
+	}
+	@Test
+	void iteratorTest( ) {
+		runTest(numbers);
+	}
 	protected Integer[] getArray() {
 		return collection.stream().toArray(Integer[]::new);
 	}
