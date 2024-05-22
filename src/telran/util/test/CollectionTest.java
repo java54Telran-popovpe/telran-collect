@@ -30,7 +30,7 @@ public abstract class CollectionTest {
 	@DisplayName(value="Collection::contains(object)")
 	void containsMethodTest() {
 		assertTrue( collection.contains(10) );
-		assertTrue(!collection.contains(-3));
+		assertFalse(collection.contains(-3));
 	}
 	
 	@Test
