@@ -59,6 +59,7 @@ public abstract class CollectionTest {
 				getArray());
 	}
 	@Test
+	@DisplayName(value="Collection::Iterator")
 	void iteratorTest( ) {
 		runTest(numbers);
 	}
