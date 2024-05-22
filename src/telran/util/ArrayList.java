@@ -103,16 +103,20 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public int indexOf(T pattern) {
 		int index = 0;
-		while ( index < size && !pattern.equals(array[ index ]) ) {
+	while ( index < size && !compareNullable( array[ index ], pattern) ) {
 			index++;
 		}
 		return index == size ? -1 : index;
 	}
 
+	private boolean compareNullable(T element, T pattern) {
+		return  ( element == null && pattern == null ) || ( element != null && element.equals(pattern) ) ? true : false;
+	}
+
 	@Override
 	public int lastIndexOf(T pattern) {
 		int index = size - 1;
-		while ( index > -1 && !pattern.equals(array[ index ]) ) {
+		while ( index > -1 && !compareNullable( array[ index ], pattern) ) {
 			index--;
 		}
 		return index;
