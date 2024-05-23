@@ -19,8 +19,9 @@ public class LinkedList<T> implements List<T> {
 
 	@Override
 	public boolean add(T obj) {
-		// TODO Auto-generated method stub
-		return false;
+		Node<T> node = new Node<>(obj);
+		addNode(size, node);
+		return true;
 	}
 
 	@Override
@@ -55,7 +56,9 @@ public class LinkedList<T> implements List<T> {
 
 	@Override
 	public void add(int index, T obj) {
-		// TODO Auto-generated method stub
+		List.checkIndex(index, size, false);
+		Node<T> node = new Node<>(obj);
+		addNode(index, node);
 
 	}
 
