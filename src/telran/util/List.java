@@ -45,6 +45,12 @@ public interface List<T> extends Collection<T> {
 	 */
 	int lastIndexOf(T pattern);
 
+	/**
+	 * 
+	 * @param index - index for check
+	 * @param size - size of collection
+	 * @param exlusive - if index value of size is not valid?
+	 */
 	static void checkIndex(int index, int size, boolean exlusive) {
 		if ( index < 0 || index >  size  + ( exlusive ? -1 : 0) )
 			throw new IndexOutOfBoundsException();

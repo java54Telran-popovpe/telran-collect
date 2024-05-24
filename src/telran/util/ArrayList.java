@@ -81,8 +81,7 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public void add(int index, T obj) {
-		if ( index < 0 || index > size )
-			throw new IndexOutOfBoundsException();
+		List.checkIndex(index, size, true);
 		if( size == array.length)
 			allocate();
 		System.arraycopy(array, index, array, index + 1, size - index);
