@@ -1,6 +1,7 @@
 package telran.util;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class LinkedList<T> implements List<T> {
 	
@@ -44,8 +45,25 @@ public class LinkedList<T> implements List<T> {
 
 	@Override
 	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<T>() {
+			
+			Node<T> currentNode = head;
+			
+			@Override
+			public boolean hasNext() {
+				return currentNode.next != null;
+			}
+
+			@Override
+			public T next() {
+				if (!hasNext())
+					throw new NoSuchElementException();
+				T valueToReturn = currentNode.data;
+				currentNode = currentNode.next;
+				return valueToReturn;
+			}
+			
+		};
 	}
 
 	@Override
@@ -59,7 +77,6 @@ public class LinkedList<T> implements List<T> {
 		List.checkIndex(index, size, false);
 		Node<T> node = new Node<>(obj);
 		addNode(index, node);
-
 	}
 
 	@Override

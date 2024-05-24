@@ -1,7 +1,9 @@
 package telran.util;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ArrayList<T> implements List<T> {
 	
@@ -66,6 +68,8 @@ public class ArrayList<T> implements List<T> {
 
 			@Override
 			public T next() {
+				if ( !hasNext() )
+					throw new NoSuchElementException();
 				return array[index++];
 			}
 			
