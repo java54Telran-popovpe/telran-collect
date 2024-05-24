@@ -87,7 +87,7 @@ public class LinkedList<T> implements List<T> {
 
 	@Override
 	public int indexOf(T pattern) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
