@@ -44,4 +44,9 @@ public interface List<T> extends Collection<T> {
 	 * otherwize -1 
 	 */
 	int lastIndexOf(T pattern);
+
+	static void checkIndex(int index, int size, boolean exlusive) {
+		if ( index < 0 || index >  size  + ( exlusive ? -1 : 0) )
+			throw new IndexOutOfBoundsException();
+	}
 }
