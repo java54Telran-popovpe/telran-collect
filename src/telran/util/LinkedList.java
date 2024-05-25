@@ -109,7 +109,7 @@ public class LinkedList<T> implements List<T> {
 		else
 			deleteInBetweenNode( nodeToDelete );
 		size--;
-		
+		nodeToDelete.data = null;
 	}
 
 	private void deleteLonelyNode(Node<T> nodeToDelete) {
@@ -121,18 +121,21 @@ public class LinkedList<T> implements List<T> {
 		Node<T> nodeNext = nodeToDelete.next;
 		nodePrev.next = nodeNext;
 		nodeNext.prev = nodePrev;
+		nodeToDelete.prev = nodeToDelete.next = null;
 	}
 
 	private void deleteTailNode(Node<T> nodeToDelete) {
 		Node<T> nodePrev = nodeToDelete.prev;
 		nodePrev.next = null;
 		tail = nodePrev;
+		nodeToDelete.prev = null;
 	}
 
 	private void deleteHeadNode(Node<T> nodeToDelete) {
 		Node<T> nodeNext = nodeToDelete.next;
 		nodeNext.prev = null;
 		head = nodeNext;
+		nodeToDelete.next = null;
 	}
 
 	@Override
