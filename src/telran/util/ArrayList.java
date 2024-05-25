@@ -3,6 +3,7 @@ package telran.util;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class ArrayList<T> implements List<T> {
 	
@@ -104,7 +105,7 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public int indexOf(T pattern) {
 		int index = 0;
-	while ( index < size && !Collection.compareNullable( array[ index ], pattern) ) {
+	while ( index < size && !Objects.equals( array[ index ], pattern) ) {
 			index++;
 		}
 		return index == size ? -1 : index;
@@ -115,7 +116,7 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public int lastIndexOf(T pattern) {
 		int index = size - 1;
-		while ( index > -1 && !Collection.compareNullable( array[ index ], pattern) ) {
+		while ( index > -1 && !Objects.equals( array[ index ], pattern) ) {
 			index--;
 		}
 		return index;
