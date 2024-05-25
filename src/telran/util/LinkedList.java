@@ -19,6 +19,7 @@ public class LinkedList<T> implements List<T> {
 	} 
 
 	@Override
+	//Time complexity O(1)
 	public boolean add(T obj) {
 		Node<T> node = new Node<>(obj);
 		addNode(size, node);
@@ -26,32 +27,38 @@ public class LinkedList<T> implements List<T> {
 	}
 
 	@Override
+	//Time complexity O(n)
 	public boolean remove(T pattern) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = false;
+		int indexOfPattern = indexOf(pattern);
+		if ( indexOfPattern > -1 ) {
+			remove(indexOfPattern);
+			result = true;
+		}
+		return result;
 	}
 
 	@Override
+	//Time complexity O(n)
 	public boolean contains(T pattern) {
-		// TODO Auto-generated method stub
-		return false;
+		return indexOf(pattern) > -1;
 	}
 
 	@Override
+	//Time complexity O(1)
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size;
 	}
 
 	@Override
 	public Iterator<T> iterator() {
 		return new Iterator<T>() {
 			
-			Node<T> currentNode = head;
+			private Node<T> currentNode = head;
 			
 			@Override
 			public boolean hasNext() {
-				return currentNode.next != null;
+				return currentNode != null;
 			}
 
 			@Override
@@ -67,34 +74,93 @@ public class LinkedList<T> implements List<T> {
 	}
 
 	@Override
+	//Time complexity O(n)
 	public T get(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		List.checkIndex(index, size - 1 );
+		return getNode(index).data;
 	}
 
 	@Override
+	//Time complexity O(n)
 	public void add(int index, T obj) {
-		List.checkIndex(index, size, false);
+		
+		List.checkIndex(index, size);
 		Node<T> node = new Node<>(obj);
 		addNode(index, node);
 	}
 
 	@Override
+	//Time complexity O(n)
 	public T remove(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		List.checkIndex(index, size - 1 );
+		Node<T> nodeToDelete = getNode(index);
+		T deletedData = nodeToDelete.data;
+		deleteNode(nodeToDelete, index);
+		return deletedData;
 	}
 
-	@Override
-	public int indexOf(T pattern) {
+	private void deleteNode(Node<T> nodeToDelete, int index) {
+		if (size == 1 )
+			deleteLonelyNode( nodeToDelete );
+		else if ( index == 0 )
+			deleteHeadNode( nodeToDelete );
+		else if( index == size - 1 )
+			deleteTailNode( nodeToDelete );
+		else
+			deleteInBetweenNode( nodeToDelete );
+		size--;
 		
-		return 0;
+	}
+
+	private void deleteLonelyNode(Node<T> nodeToDelete) {
+		head = tail = null;
+	}
+
+	private void deleteInBetweenNode(Node<T> nodeToDelete) {
+		Node<T> nodePrev = nodeToDelete.prev;
+		Node<T> nodeNext = nodeToDelete.next;
+		nodePrev.next = nodeNext;
+		nodeNext.prev = nodePrev;
+	}
+
+	private void deleteTailNode(Node<T> nodeToDelete) {
+		Node<T> nodePrev = nodeToDelete.prev;
+		nodePrev.next = null;
+		tail = nodePrev;
+	}
+
+	private void deleteHeadNode(Node<T> nodeToDelete) {
+		Node<T> nodeNext = nodeToDelete.next;
+		nodeNext.prev = null;
+		head = nodeNext;
 	}
 
 	@Override
+	//Time complexity O(n)
+	public int indexOf(T pattern) {
+		Node<T> nodeToCheck = head;
+		int currentIndex = -1;
+		boolean patternFound = false;
+		while( nodeToCheck != null && !patternFound) {
+			currentIndex++;
+			patternFound = Collection.compareNullable(nodeToCheck.data, pattern);
+			nodeToCheck = nodeToCheck.next;
+		}
+		return patternFound ? currentIndex : -1;
+	}
+
+	@Override
+	//Time complexity O(n)
 	public int lastIndexOf(T pattern) {
-		// TODO Auto-generated method stub
-		return 0;
+		Node<T> nodeToCheck = tail;
+		int currentIndex = size;
+		boolean patternFound = false;
+		while( nodeToCheck != null && !patternFound) {
+			currentIndex--;
+			patternFound = Collection.compareNullable(nodeToCheck.data, pattern);
+			nodeToCheck = nodeToCheck.prev;
+		}
+		return patternFound ? currentIndex : -1;
 	}
 	private Node<T> getNode( int index ) {
 		return index < size / 2 ? getNodeFromHead(index) : getNodeFromTail(index);

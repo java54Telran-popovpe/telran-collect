@@ -1,7 +1,6 @@
 package telran.util.test;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
@@ -18,6 +17,7 @@ public abstract class ListTest extends CollectionTest {
 		super.setUp();
 		list = (List<Integer>)collection;
 	}
+	
 	@Test
 	@DisplayName(value="List::get(index)")
 	void getTest() {
@@ -28,6 +28,7 @@ public abstract class ListTest extends CollectionTest {
 		runGetTest(6, 0);
 		runGetTest(10, 0);
 	}
+	
 	@Test
 	@DisplayName(value="List::add(index,object)")
 	void addTest() {
@@ -49,7 +50,7 @@ public abstract class ListTest extends CollectionTest {
 		
 	}
 	@Test
-	@DisplayName(value="List::add(index,object)")
+	@DisplayName(value="List::remove(index,object)")
 	void removeTest() {
 		runRemoveTest(-1, new Integer[]{ -20, 10, 1, 100, -5 });
 		runRemoveTest(5, new Integer[]{ -20, 10, 1, 100, -5 });
@@ -69,6 +70,8 @@ public abstract class ListTest extends CollectionTest {
 		assertEquals(-1, list.indexOf(0));
 		list.add(3, null);
 		assertEquals( 3, list.indexOf(null));
+		list.add(0, 12);
+		assertEquals(0, list.indexOf(12));
 	}
 	
 	@Test

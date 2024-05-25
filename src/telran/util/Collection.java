@@ -14,6 +14,13 @@ public interface Collection<T> extends Iterable<T> {
 	boolean remove(T pattern);
 	boolean contains(T pattern);
 	int size();
+	/**
+	 * 
+	 * @param <T>
+	 * @param a
+	 * @param b
+	 * @return true if a and b is Null of a equals b
+	 */
 	static <T> boolean compareNullable(T element, T pattern) {
 		return  ( element == null && pattern == null ) || ( element != null && element.equals(pattern) ) ? true : false;
 	}

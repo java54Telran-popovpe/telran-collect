@@ -1,6 +1,5 @@
 package telran.util;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -85,7 +84,7 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public void add(int index, T obj) {
-		List.checkIndex(index, size, false);
+		List.checkIndex(index, size );
 		if( size == array.length)
 			allocate();
 		System.arraycopy(array, index, array, index + 1, size - index);
@@ -95,7 +94,7 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public T remove(int index) {
-		List.checkIndex(index, size, true);
+		List.checkIndex(index, size -1 );
 		T removedElement = array[ index ];
 		System.arraycopy(array, index + 1, array, index, size - index - 1); 
 		size--;
