@@ -51,12 +51,20 @@ public abstract class CollectionTest {
 	void addObjectTest() {
 		for ( int count = 0; count < 3; count++ )
 			for( Integer i: new Integer[]{  -20, 10, 1, 100, -5, }) 
-				collection.add(i);
+				assertTrue(collection.add(i));
 		assertArrayEquals(new Integer[]{  	-20, 10, 1, 100, -5, 
 											-20, 10, 1, 100, -5, 
 											-20, 10, 1, 100, -5, 
 											-20, 10, 1, 100, -5,},
 				getArray());
+		for( Integer i: new Integer[]{  -19, 11, 2, 101, -4 , }) 
+			assertTrue(collection.add(i));
+		assertArrayEquals(new Integer[]{  	-20, 10, 1, 100, -5, 
+										-20, 10, 1, 100, -5, 
+										-20, 10, 1, 100, -5, 
+										-20, 10, 1, 100, -5,
+										-19, 11, 2, 101, -4 , },
+			getArray());
 	}
 	@Test
 	@DisplayName(value="Collection::Iterator")

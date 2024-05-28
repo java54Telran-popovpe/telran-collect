@@ -2,6 +2,7 @@ package telran.util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class LinkedList<T> implements List<T> {
 	
@@ -146,7 +147,7 @@ public class LinkedList<T> implements List<T> {
 		boolean patternFound = false;
 		while( nodeToCheck != null && !patternFound) {
 			currentIndex++;
-			patternFound = Collection.compareNullable(nodeToCheck.data, pattern);
+			patternFound = Objects.equals(nodeToCheck.data, pattern);
 			nodeToCheck = nodeToCheck.next;
 		}
 		return patternFound ? currentIndex : -1;
@@ -160,7 +161,7 @@ public class LinkedList<T> implements List<T> {
 		boolean patternFound = false;
 		while( nodeToCheck != null && !patternFound) {
 			currentIndex--;
-			patternFound = Collection.compareNullable(nodeToCheck.data, pattern);
+			patternFound = Objects.equals(nodeToCheck.data, pattern);
 			nodeToCheck = nodeToCheck.prev;
 		}
 		return patternFound ? currentIndex : -1;
