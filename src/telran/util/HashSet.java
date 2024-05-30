@@ -15,12 +15,11 @@ public class HashSet<T> implements Set<T> {
 	private class HashSetIterator implements Iterator<T> {
 		
 		//HashTableIterator iterates over no-zero-sized elements(lists) of hashTable
-		private class HashTableIterator implements Iterator<List<T>> {
-			int currentIndex = -1;
+		private class HashTableIterator implements Iterator<Iterator<T>> {
+			int currentIndex;
 			
 			private HashTableIterator() {
-				setCurrentIndexOnNextList();
-				
+				correctIndex();
 			}
 			
 			@Override
@@ -29,32 +28,33 @@ public class HashSet<T> implements Set<T> {
 			}
 
 			@Override
-			public List<T> next() {
+			public Iterator<T> next() {
 				if (!hasNext())
 					throw new NoSuchElementException();
 				
-				List<T> result = hashTable[currentIndex];
-				setCurrentIndexOnNextList();
+				Iterator<T> result = hashTable[currentIndex].iterator();
+				currentIndex++;
+				correctIndex();
 				return result;
 				
 			}
 			
-			private void setCurrentIndexOnNextList() {
-				do {
+			private void correctIndex() {
+				while (currentIndex < hashTable.length && 
+						( hashTable[currentIndex] == null || 
+						  hashTable[currentIndex] != null && hashTable[currentIndex].size() == 0 ) ) {
 					currentIndex++;
-				}
-				while (currentIndex < hashTable.length && ( hashTable[currentIndex] == null || 
-															hashTable[currentIndex] != null && hashTable[currentIndex].size() == 0 ) );
+				};
 				
 			}
 		}
 
-		Iterator<List<T>> hashTableIterator = new HashTableIterator();
+		Iterator<Iterator<T>> hashTableIterator = new HashTableIterator();
 		Iterator<T> currentListIterator;
 		
 		private HashSetIterator() {
 			if ( hashTableIterator.hasNext() )
-				currentListIterator = hashTableIterator.next().iterator();
+				currentListIterator = hashTableIterator.next();
 		}
 		
 	
@@ -69,7 +69,7 @@ public class HashSet<T> implements Set<T> {
 				throw new NoSuchElementException();
 			T result = currentListIterator.next();
 			if(!currentListIterator.hasNext() && hashTableIterator.hasNext()) {
-				currentListIterator = hashTableIterator.next().iterator();
+				currentListIterator = hashTableIterator.next();
 					
 			}
 			return result;

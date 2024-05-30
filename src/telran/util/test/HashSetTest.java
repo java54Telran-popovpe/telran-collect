@@ -15,7 +15,7 @@ public class HashSetTest extends SetTest {
 @Override
 	@BeforeEach
 	void setUp( ) {
-		collection = new HashSet<>(3, 0.75f);
+		collection = new HashSet<>(4, 0.75f);
 		super.setUp();
 	}
 
