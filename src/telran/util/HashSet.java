@@ -1,7 +1,15 @@
 package telran.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 public class HashSet<T> implements Set<T> {
@@ -11,6 +19,8 @@ public class HashSet<T> implements Set<T> {
 	List<T>[] hashTable;
 	int size;
 	float factor;
+	
+	public java.util.List<Integer> collectedStats = new ArrayList<Integer>();
 	
 	private class HashSetIterator implements Iterator<T> {
 		
@@ -36,7 +46,6 @@ public class HashSet<T> implements Set<T> {
 				currentIndex++;
 				correctIndex();
 				return result;
-				
 			}
 			
 			private void correctIndex() {
@@ -92,13 +101,23 @@ public class HashSet<T> implements Set<T> {
 	public boolean add(T obj) {
 		boolean result = false;
 		if ( !contains( obj )) {
-			if ( ( float )size / hashTable.length >= factor )
+			if ( ( float )size / hashTable.length >= factor ) {
+				collectStat(hashTable.length, 3);
 				hashTableReallocation();
+			}
 			addObjInHashTable( obj, hashTable );
 			size++;
 			result = true;
 		}
 		return result;
+	}
+
+	private void collectStat(int length, int i) {
+		collectedStats.addAll( 
+				Arrays.stream(hashTable)
+				.filter(e->(Objects.nonNull(e) && e.size() >= i))
+				.map(e->e.size()).toList());
+		
 	}
 
 	private void hashTableReallocation() {
@@ -170,5 +189,7 @@ public class HashSet<T> implements Set<T> {
 		}
 		return result;
 	}
+	
+
 
 }
