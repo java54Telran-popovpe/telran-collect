@@ -106,10 +106,11 @@ public class TreeSet<T> implements SortedSet<T> {
 		}
 	}
 	private void removeNodeWithMaxTwoNeighbours(Node<T> node) {
+		node.data = null;
 		Node<T> childNode = node.left == null ? node.right : node.left;
 		Node<T> parentNode = node.parent;
 		if (parentNode != null ) {
-			if ( comp.compare(node.data, parentNode.data) < 0 )
+			if ( parentNode.left == node )
 				parentNode.left = childNode;
 			else
 				parentNode.right = childNode;
@@ -186,11 +187,13 @@ public class TreeSet<T> implements SortedSet<T> {
 	}
 
 	private Node<T> getFirstGreaterFromParents(Node<T> node) {
-		T dataToCompare = node.data;
-		do {
-			node = node.parent;
-		} while( node != null && comp.compare(node.data, dataToCompare ) < 0 );
-		return node;
+		Node<T> childNode = node;
+		Node<T> parentNode = childNode == null ? null : childNode.parent;
+		while ( parentNode != null && parentNode.right == childNode ) {
+			childNode = parentNode;
+			parentNode = parentNode.parent;
+		}
+		return parentNode;
 	}
 
 }
