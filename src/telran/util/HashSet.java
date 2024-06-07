@@ -12,54 +12,54 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-public class HashSet<T> implements Set<T> {
+public class HashSet<T> extends AbstractCollection<T> implements Set<T> {
 	
 	private static final int DEFAULT_HASH_TABLE_LENGTH = 16;
 	private static final float DEFAULT_FACTOR = 0.75f;
 	List<T>[] hashTable;
-	int size;
 	float factor;
 	
 	public java.util.List<Integer> collectedStats = new ArrayList<Integer>();
 	
-	private class HashSetIterator implements Iterator<T> {
+	private class HashTableIterator implements Iterator<Iterator<T>> {
+		private int currentIndex;
 		
-		//HashTableIterator iterates over no-zero-sized elements(lists) of hashTable
-		private class HashTableIterator implements Iterator<Iterator<T>> {
-			int currentIndex;
-			
-			private HashTableIterator() {
-				correctIndex();
-			}
-			
-			@Override
-			public boolean hasNext() {
-				return currentIndex < hashTable.length;
-			}
-
-			@Override
-			public Iterator<T> next() {
-				if (!hasNext())
-					throw new NoSuchElementException();
-				
-				Iterator<T> result = hashTable[currentIndex].iterator();
-				currentIndex++;
-				correctIndex();
-				return result;
-			}
-			
-			private void correctIndex() {
-				while (currentIndex < hashTable.length && 
-						( hashTable[currentIndex] == null || 
-						  hashTable[currentIndex] != null && hashTable[currentIndex].size() == 0 ) ) {
-					currentIndex++;
-				};
-				
-			}
+		private HashTableIterator() {
+			correctIndex();
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return currentIndex < hashTable.length;
 		}
 
+		@Override
+		public Iterator<T> next() {
+			if (!hasNext())
+				throw new NoSuchElementException();
+			
+			Iterator<T> result = hashTable[currentIndex].iterator();
+			currentIndex++;
+			correctIndex();
+			return result;
+		}
+		
+		private void correctIndex() {
+			while (currentIndex < hashTable.length && 
+					( hashTable[currentIndex] == null || 
+					  hashTable[currentIndex] != null && hashTable[currentIndex].size() == 0 ) ) {
+				currentIndex++;
+			};
+			
+		}
+	}
+
+	
+	private class HashSetIterator implements Iterator<T> {
+		
 		Iterator<Iterator<T>> hashTableIterator = new HashTableIterator();
 		Iterator<T> currentListIterator;
+		private boolean flNext = false;
 		
 		private HashSetIterator() {
 			if ( hashTableIterator.hasNext() )
@@ -76,6 +76,7 @@ public class HashSet<T> implements Set<T> {
 		public  T next() {
 			if (!hasNext())
 				throw new NoSuchElementException();
+			flNext = true;
 			T result = currentListIterator.next();
 			if(!currentListIterator.hasNext() && hashTableIterator.hasNext()) {
 				currentListIterator = hashTableIterator.next();
@@ -83,6 +84,14 @@ public class HashSet<T> implements Set<T> {
 			}
 			return result;
 		}
+		@Override
+		public void remove() {
+			if (!flNext )
+				throw new IllegalStateException();
+			currentListIterator.remove();
+			flNext = false;
+		}
+		
 		
 		
 	}
@@ -166,11 +175,6 @@ public class HashSet<T> implements Set<T> {
 		int index = getIndex(pattern);
 		List<T> list = hashTable[index];
 		return list!= null && list.contains(pattern);
-	}
-
-	@Override
-	public int size() {
-		return size;
 	}
 
 	@Override

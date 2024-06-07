@@ -2,7 +2,11 @@ package telran.util.test;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -70,6 +74,18 @@ public abstract class CollectionTest {
 	@DisplayName(value="Collection::Iterator")
 	void iteratorTest( ) {
 		runTest(numbers);
+		Iterator<Integer> it = collection.iterator();
+		
+		assertThrowsExactly(IllegalStateException.class, () -> it.remove());
+		Integer num = null;
+		while(it.hasNext()) {
+			num = it.next();
+		}
+		assertThrowsExactly(NoSuchElementException.class, () -> it.next());
+		it.remove();
+		assertFalse(collection.contains(num));
+		assertEquals(numbers.length - 1, collection.size());
+		assertThrowsExactly(IllegalStateException.class, () -> it.remove());
 	}
 	protected Integer[] getArray() {
 		return collection.stream().toArray(Integer[]::new);
@@ -90,5 +106,20 @@ public abstract class CollectionTest {
 			assertTrue(!collection.remove(removed));
 			assertArrayEquals(arrayBefore, getArray());
 		}
+	}
+	
+	@Test
+	@DisplayName(value="RemoveIf")
+	void removeIfTest() {
+		assertTrue(collection.removeIf( e -> e % 2 == 0 ));
+		assertTrue(collection.stream().allMatch( e -> e %2 != 0 ));
+		assertFalse(collection.removeIf( e -> e % 2 == 0 ));
+	}
+	
+	@Test
+	@DisplayName(value="clear")
+	void clearTest() {
+		collection.clear();
+		assertEquals(0, collection.size());
 	}
 }

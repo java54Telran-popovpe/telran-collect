@@ -44,6 +44,21 @@ public interface List<T> extends Collection<T> {
 	 * otherwize -1 
 	 */
 	int lastIndexOf(T pattern);
+	
+	@Override
+	default boolean remove (T pattern) {
+		boolean result = false;
+		int indexOfPattern = indexOf(pattern);
+		if ( indexOfPattern > -1 ) {
+			remove(indexOfPattern);
+			result = true;
+		}
+		return result;
+
+	}
+	default boolean contains(T pattern) {
+		return indexOf(pattern) > -1;
+	}
 
 	/**
 	 * 

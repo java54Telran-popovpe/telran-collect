@@ -4,11 +4,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Predicate;
 
-public class ArrayList<T> implements List<T> {
+public class ArrayList<T> extends AbstractCollection<T>  implements List<T> {
 	
 	private static int DEFAULT_CAPACITY = 16;
-	private int size;
 	private T[] array;
 
 	@SuppressWarnings("unchecked")
@@ -34,42 +34,32 @@ public class ArrayList<T> implements List<T> {
 		
 	}
 
-	@Override
-	public boolean remove(T pattern) {
-		int index = indexOf( pattern );
-		boolean result = false;
-		if (index > -1 ) {
-			result = true;
-			remove(index);
-		}
-		return result;
-	}
-
-	@Override
-	public boolean contains(T pattern) {
-		return indexOf(pattern) > -1;
-	}
-
-	@Override
-	public int size() {
-		return size;
-	}
 
 	@Override
 	public Iterator<T> iterator() {
 		return new Iterator<T>() {
 			
 			private int index = 0;
+			boolean flNext = false;
 			
 			@Override
 			public boolean hasNext() {
 				return index < size;
+			}
+			
+			@Override
+			public void remove() {
+				if (!flNext)
+					throw new IllegalStateException();
+				ArrayList.this.remove(--index);
+				flNext = false;
 			}
 
 			@Override
 			public T next() {
 				if ( !hasNext() )
 					throw new NoSuchElementException();
+				flNext = true;
 				return array[index++];
 			}
 			
@@ -122,5 +112,10 @@ public class ArrayList<T> implements List<T> {
 		return index;
 	}
 	
+	@Override
+	public boolean removeIf(Predicate<T> predicate) {
+		//TODO
+		return false;
+	}
 
 }

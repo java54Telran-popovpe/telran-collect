@@ -4,11 +4,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class LinkedList<T> implements List<T> {
+public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 	
 	Node<T> head;
 	Node<T> tail;
-	int size;
 	
 	private static class Node<T> {
 		T data;
@@ -28,34 +27,12 @@ public class LinkedList<T> implements List<T> {
 	}
 
 	@Override
-	//Time complexity O(n)
-	public boolean remove(T pattern) {
-		boolean result = false;
-		int indexOfPattern = indexOf(pattern);
-		if ( indexOfPattern > -1 ) {
-			remove(indexOfPattern);
-			result = true;
-		}
-		return result;
-	}
-
-	@Override
-	//Time complexity O(n)
-	public boolean contains(T pattern) {
-		return indexOf(pattern) > -1;
-	}
-
-	@Override
-	//Time complexity O(1)
-	public int size() {
-		return size;
-	}
-
-	@Override
 	public Iterator<T> iterator() {
 		return new Iterator<T>() {
 			
 			private Node<T> currentNode = head;
+			private boolean flNext = false;
+			private int index = 0;
 			
 			@Override
 			public boolean hasNext() {
@@ -66,9 +43,22 @@ public class LinkedList<T> implements List<T> {
 			public T next() {
 				if (!hasNext())
 					throw new NoSuchElementException();
+				flNext = true;
 				T valueToReturn = currentNode.data;
 				currentNode = currentNode.next;
+				index++;
 				return valueToReturn;
+			}
+			
+			@Override
+			public void remove() {
+				if (!flNext)
+					throw new IllegalStateException();
+				if ( currentNode == null  )
+					deleteNode(tail, --index);
+				else
+					deleteNode(currentNode.prev, --index);
+				flNext = false;
 			}
 			
 		};
