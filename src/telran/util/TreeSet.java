@@ -159,7 +159,10 @@ public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 	}
 
 	private class TreeSetIterator implements Iterator<T> {
+		
 		Node<T> current = getLeastFrom(root);
+		Node<T> nodeToDelete = null;
+		
 		@Override
 		public boolean hasNext() {
 			return current != null;
@@ -169,9 +172,19 @@ public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 		public T next() {
 			if (!hasNext())
 				throw new NoSuchElementException();
+			nodeToDelete = current;
 			T res = current.data;
 			current = getCurrent(current);
 			return res;
+		}
+		
+		@Override
+		public void remove() {
+			if (nodeToDelete == null )
+				throw new IllegalStateException();
+			removeNode(nodeToDelete);
+			size--;
+			nodeToDelete = null;
 		}
 		
 	}

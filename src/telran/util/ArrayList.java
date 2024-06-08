@@ -114,8 +114,23 @@ public class ArrayList<T> extends AbstractCollection<T>  implements List<T> {
 	
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
-		//TODO
-		return false;
+		int shiftValue = 0;
+		for ( int i = 0; i < size; i++) {
+			if ( predicate.negate().test(array[ i ]))
+				moveWithShift( i,  shiftValue );
+			else {
+				shiftValue++;
+			}
+		}
+		size -= shiftValue;
+		return shiftValue > 0 ;
+	}
+
+	private void moveWithShift(int from, int shiftValue) {
+		if ( shiftValue > 0 ) {
+			array[from - shiftValue] = array[from];
+			array[ from ] = null;
+		}
 	}
 
 }

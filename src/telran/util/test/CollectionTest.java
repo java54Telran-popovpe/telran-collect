@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -119,6 +120,17 @@ public abstract class CollectionTest {
 	@Test
 	@DisplayName(value="clear")
 	void clearTest() {
+		collection.clear();
+		assertEquals(0, collection.size());
+	}
+	
+	@Test
+	@DisplayName(value = "clearOfHugeCollection")
+	void clearHugeTest() {
+		collection.clear();
+		Integer[] arr= new Random().ints().boxed().distinct().limit(1000000).toArray(Integer[]::new);
+		for(Integer integer: arr)
+			collection.add(integer);
 		collection.clear();
 		assertEquals(0, collection.size());
 	}

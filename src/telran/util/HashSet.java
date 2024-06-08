@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.junit.platform.engine.support.hierarchical.Node;
+
 @SuppressWarnings("unchecked")
 public class HashSet<T> extends AbstractCollection<T> implements Set<T> {
 	
@@ -59,7 +61,9 @@ public class HashSet<T> extends AbstractCollection<T> implements Set<T> {
 		
 		Iterator<Iterator<T>> hashTableIterator = new HashTableIterator();
 		Iterator<T> currentListIterator;
+		Iterator<T> listIteratorToRemove;
 		private boolean flNext = false;
+		
 		
 		private HashSetIterator() {
 			if ( hashTableIterator.hasNext() )
@@ -77,6 +81,7 @@ public class HashSet<T> extends AbstractCollection<T> implements Set<T> {
 			if (!hasNext())
 				throw new NoSuchElementException();
 			flNext = true;
+			listIteratorToRemove = currentListIterator;
 			T result = currentListIterator.next();
 			if(!currentListIterator.hasNext() && hashTableIterator.hasNext()) {
 				currentListIterator = hashTableIterator.next();
@@ -88,7 +93,8 @@ public class HashSet<T> extends AbstractCollection<T> implements Set<T> {
 		public void remove() {
 			if (!flNext )
 				throw new IllegalStateException();
-			currentListIterator.remove();
+			listIteratorToRemove.remove();
+			size--;
 			flNext = false;
 		}
 		
