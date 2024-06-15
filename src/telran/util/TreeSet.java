@@ -1,5 +1,6 @@
 package telran.util;
 
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -46,20 +47,34 @@ public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 	
 	
 	private Node<T> getNode(T pattern) {
-		Node<T> node = getParentOrNode(pattern);
+		Node<T> node = getParentOrNode(pattern, GetParentOrNodeReturnMode.PARENT_OR_NODE);
 		return node != null && comp.compare(pattern, node.data) == 0 ? node : null;
 	}
 
-	private Node<T> getParentOrNode(T pattern) {
+	private Node<T> getParentOrNode(T pattern, GetParentOrNodeReturnMode mode) {
 		Node<T> current = root;
 		Node<T> parent = null;
+		Node<T> lastRightTurn = null;
+		Node<T> lastLeftTurn = null;
 		int compareResult = 0;
 		while( current != null && (compareResult = comp.compare(pattern, current.data)) != 0 ) {
 			parent = current;
-			current = compareResult > 0 ? current.right : current.left;
+			if (compareResult > 0) {
+				lastRightTurn = current;
+				current = current.right;
+			} else {
+				lastLeftTurn = current;
+				current = current.left;
+			}
 		}
-		return current == null ? parent : current;
+		return 	switch(mode) {
+					case PARENT_OR_NODE -> current == null ? parent : current;
+					case CEILING -> current != null ? current : lastLeftTurn;
+					case FLOOR -> current != null ? current : lastRightTurn;
+				};
 	}
+	
+
 
 	@Override
 	public boolean add(T obj) {
@@ -82,7 +97,7 @@ public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 	}
 
 	private void addWithParent(Node<T> node) {
-		Node<T> parent = getParentOrNode(node.data);
+		Node<T> parent = getParentOrNode(node.data, GetParentOrNodeReturnMode.PARENT_OR_NODE);
 		if (comp.compare(node.data, parent.data) > 0 ) {
 			parent.right = node;
 		} else {
@@ -215,29 +230,15 @@ public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 
 	@Override
 	public T ceiling(T key) {
-		return getExactlyOrNearestValue(key, comp, node -> node.parent.right == node);
+		Node<T> ceilingNode = getParentOrNode(key, GetParentOrNodeReturnMode.CEILING);
+		return ceilingNode == null ? null : ceilingNode.data;
 	}
-	
-	private T getExactlyOrNearestValue(T key, Comparator<T> comparator, Predicate<Node<T>> predicate) {
-		T result = null;
-		if (contains(key)) {
-			result = key;
-		} else {
-			Node<T> possibleParentNode = getParentOrNode(key);
-			if ( possibleParentNode != null )
-				if ( comparator.compare(key, possibleParentNode.data) < 0)
-					result = possibleParentNode.data;
-				else {
-					Node<T> nearestNode = getFirstParentIfNot(possibleParentNode, predicate );
-					result = nearestNode != null ? nearestNode.data : null;
-				}
-		}
-		return result;
-	}
+
 	
 	@Override
 	public T floor(T key) {
-		return getExactlyOrNearestValue(key, comp.reversed(), node -> node.parent.left == node);
+		Node<T> floorNode = getParentOrNode(key, GetParentOrNodeReturnMode.FLOOR);
+		return floorNode == null ? null : floorNode.data;
 	}
 	/**
 	 * display tree in the following view
