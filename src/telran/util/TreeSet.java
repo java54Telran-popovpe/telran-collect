@@ -3,6 +3,8 @@ package telran.util;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 	private static class  Node<T> {
@@ -14,8 +16,18 @@ public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 			this.data = data;
 		}
 	}
+	private static final int DEFAULT_SPACES_PER_LEVEL = 2;
 	Node<T> root;
 	Comparator<T> comp;
+	private int spacesPerLevel = DEFAULT_SPACES_PER_LEVEL;
+
+	public int getSpacesPerLevel() {
+		return spacesPerLevel;
+	}
+
+	public void setSpacesPerLevel(int spacesPerLevel) {
+		this.spacesPerLevel = spacesPerLevel;
+	}
 
 	public TreeSet(Comparator<T> comp ) {
 		this.comp = comp;
@@ -190,14 +202,142 @@ public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 	}
 
 	private Node<T> getCurrent(Node<T> current) {
-			return current.right != null ? getLeastFrom(current.right) : getFirstGreaterFromParents(current);
+			return current.right != null ? getLeastFrom(current.right) : getFirstParentIfNot(current, node -> node.parent.right == node);
 	}
 
-	private Node<T> getFirstGreaterFromParents(Node<T> node) {
-		while ( node.parent != null && node.parent.right == node ) {
+
+	private Node<T> getFirstParentIfNot( Node<T> node, Predicate<Node<T>> predicate) {
+		while ( node.parent != null && predicate.test(node) ) {
 			node = node.parent;
 		}
 		return node.parent;
 	}
+
+	@Override
+	public T ceiling(T key) {
+		return getExactlyOrNearestValue(key, comp, node -> node.parent.right == node);
+	}
+	
+	private T getExactlyOrNearestValue(T key, Comparator<T> comparator, Predicate<Node<T>> predicate) {
+		T result = null;
+		if (contains(key)) {
+			result = key;
+		} else {
+			Node<T> possibleParentNode = getParentOrNode(key);
+			if ( possibleParentNode != null )
+				if ( comparator.compare(key, possibleParentNode.data) < 0)
+					result = possibleParentNode.data;
+				else {
+					Node<T> nearestNode = getFirstParentIfNot(possibleParentNode, predicate );
+					result = nearestNode != null ? nearestNode.data : null;
+				}
+		}
+		return result;
+	}
+	
+	@Override
+	public T floor(T key) {
+		return getExactlyOrNearestValue(key, comp.reversed(), node -> node.parent.left == node);
+	}
+	/**
+	 * display tree in the following view
+	 * -20
+	 * 		10
+	 * 			1
+	 * 				-5
+	 * 			100
+	 */
+	public void displayRootChildren() {
+		displayRootChildren( root, 1);
+	}
+	
+	private void displayRootChildren(Node<T> tmpRoot, int level) {
+		if ( tmpRoot != null ) {
+			displayRoot(tmpRoot, level);
+			displayRootChildren(tmpRoot.left, level + 1);
+			displayRootChildren(tmpRoot.right, level + 1);
+		}
+	}
+
+	/**
+	 * conversion of tree so that iterating has been in the inversing order 
+	 */
+	public void treeInversion() {
+		comp = comp.reversed();
+		treeInversion(root);
+	}
+		
+	private void treeInversion(Node<T> tmpNode) {
+		if ( tmpNode != null ) {
+				treeInversion(tmpNode.left);
+				treeInversion(tmpNode.right);
+				Node<T> tmp = tmpNode.left;
+				tmpNode.left = tmpNode.right;
+				tmpNode.right = tmp;
+		}
+	}
+
+	/**
+	 * displays tree in the following form
+	 * 				100
+	 *			10
+	 *				1
+	 *					-5
+	 *	-20
+	 */
+	public void displayTreeRotated() {
+		displayTreeRotated(root, 1);
+	}
+
+	private void displayTreeRotated(Node<T> tmpRoot, int level) {
+		if (tmpRoot != null) {
+			displayTreeRotated(tmpRoot.right, level + 1);
+			displayRoot(tmpRoot, level);
+			displayTreeRotated(tmpRoot.left, level + 1);
+		}
+	}
+
+	private void displayRoot(Node<T> tmpRoot, int level) {
+		System.out.printf("%s", " ".repeat(level * spacesPerLevel ));
+		System.out.println(tmpRoot.data);
+	}
+	/**
+	 * 
+	 * @return number of leaves ( node with both left and right nulls
+	 */
+	public int width() {
+		return width(root);
+	}
+	private int width(Node<T> tmpRoot) {
+		int result = 0;
+		if ( tmpRoot != null) {
+			if ( tmpRoot.left == null && tmpRoot.right == null ) {
+				result = 1;
+			} else {
+				result = width(tmpRoot.left) + width(tmpRoot.right);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @return numberv of the nodes of the longest route
+	 */
+	public int height() {
+		
+		return height(root);
+	}
+
+	private int height(Node<T> tmpRoot) {
+		int result = 0;
+		if (tmpRoot != null ) {
+			int heightLeft = height(tmpRoot.left);
+			int heighRight = height(tmpRoot.right);
+			result = 1 + Math.max(heightLeft, heighRight);
+		}
+		return result;
+	}
+	
 
 }
