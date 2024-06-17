@@ -339,6 +339,38 @@ public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 		}
 		return result;
 	}
+
+	public void balance() {
+		//Sorted array of tree nodes
+		if ( root != null ) {
+			Node<T>[] arrayNodes = getNodesArray();
+			root = balanceArray( arrayNodes, 0, size - 1, null);
+		}
+	}
+
+	private Node<T> balanceArray(Node<T>[] arrayNodes, int left, int right, Node<T> parent) {
+		Node<T> root = null;
+		if ( left <= right ) { 
+			int indexRoot = ( left + right ) / 2;
+			root = arrayNodes[indexRoot];
+			root.parent = parent;
+			root.left = balanceArray(arrayNodes, left, indexRoot - 1, root);
+			root.right = balanceArray(arrayNodes, indexRoot + 1, right, root);
+		}
+		
+		return root;
+	}
+
+	private Node<T>[] getNodesArray() {
+		@SuppressWarnings("unchecked")
+		Node<T>[] result = new Node[size];
+		Node<T> current = getLeastFrom(root);
+		for( int i = 0; i < size; i++ )  {
+			result[i] = current;
+			current = getCurrent(current);
+		}
+		return result;
+	}
 	
 
 }
