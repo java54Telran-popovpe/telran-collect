@@ -1,4 +1,4 @@
-package telran.util.test.yuri;
+package telran.util.test;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
