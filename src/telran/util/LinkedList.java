@@ -9,7 +9,7 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 	Node<T> head;
 	Node<T> tail;
 	
-	private static class Node<T> {
+	 static class Node<T> {
 		T data;
 		Node<T> prev;
 		Node<T> next;
@@ -31,8 +31,7 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		return new Iterator<T>() {
 			
 			private Node<T> currentNode = head;
-			private boolean flNext = false;
-			private int index = 0;
+			private Node<T> prev = null;
 			
 			@Override
 			public boolean hasNext() {
@@ -43,22 +42,17 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 			public T next() {
 				if (!hasNext())
 					throw new NoSuchElementException();
-				flNext = true;
-				T valueToReturn = currentNode.data;
+				prev = currentNode;
 				currentNode = currentNode.next;
-				index++;
-				return valueToReturn;
+				return prev.data;
 			}
 			
 			@Override
 			public void remove() {
-				if (!flNext)
+				if (prev == null)
 					throw new IllegalStateException();
-				if ( currentNode == null  )
-					deleteNode(tail, --index);
-				else
-					deleteNode(currentNode.prev, --index);
-				flNext = false;
+				deleteNode(prev);
+				prev = null;
 			}
 			
 		};
@@ -86,24 +80,27 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		List.checkIndex(index, size - 1 );
 		Node<T> nodeToDelete = getNode(index);
 		T deletedData = nodeToDelete.data;
-		deleteNode(nodeToDelete, index);
+		deleteNode(nodeToDelete);
 		return deletedData;
 	}
 
-	private void deleteNode(Node<T> nodeToDelete, int index) {
+	void deleteNode(Node<T> nodeToDelete) {
 		if (size == 1 )
-			deleteLonelyNode( nodeToDelete );
-		else if ( index == 0 )
-			deleteHeadNode( nodeToDelete );
-		else if( index == size - 1 )
-			deleteTailNode( nodeToDelete );
+			deleteLonelyNode();
+		else if ( nodeToDelete == head )
+			deleteHeadNode();
+		else if( nodeToDelete == tail )
+			deleteTailNode( );
 		else
 			deleteInBetweenNode( nodeToDelete );
 		size--;
 		nodeToDelete.data = null;
 	}
+	
 
-	private void deleteLonelyNode(Node<T> nodeToDelete) {
+
+
+	private void deleteLonelyNode() {
 		head = tail = null;
 	}
 
@@ -115,18 +112,14 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		nodeToDelete.prev = nodeToDelete.next = null;
 	}
 
-	private void deleteTailNode(Node<T> nodeToDelete) {
-		Node<T> nodePrev = nodeToDelete.prev;
-		nodePrev.next = null;
-		tail = nodePrev;
-		nodeToDelete.prev = null;
+	private void deleteTailNode() {
+		tail = tail.prev;
+		tail.next = null;
 	}
 
-	private void deleteHeadNode(Node<T> nodeToDelete) {
-		Node<T> nodeNext = nodeToDelete.next;
-		nodeNext.prev = null;
-		head = nodeNext;
-		nodeToDelete.next = null;
+	private void deleteHeadNode() {
+		head = head.next;
+		head.prev = null;
 	}
 
 	@Override
@@ -176,7 +169,7 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		return current;
 	}
 	
-	private void addNode( int index, Node<T> node) {
+	void addNode( int index, Node<T> node) {
 		
 		if ( index == 0 ) {
 			addHead( node );
