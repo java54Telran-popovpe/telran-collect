@@ -4,7 +4,6 @@ package telran.util.test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.lang.reflect.Array;
 import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
