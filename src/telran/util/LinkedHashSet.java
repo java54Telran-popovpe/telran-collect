@@ -1,6 +1,7 @@
 package telran.util;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import telran.util.LinkedList.Node;
 
@@ -40,7 +41,7 @@ public class LinkedHashSet<T> extends AbstractCollection<T> implements Set<T>{
 	@Override
 	public boolean contains(T pattern) {
 		
-		return map.get(pattern) != null ? true : false;
+		return map.get(pattern) != null;
 	}
 	@Override
 	public Iterator<T> iterator() {
@@ -65,6 +66,8 @@ public class LinkedHashSet<T> extends AbstractCollection<T> implements Set<T>{
 
 		@Override
 		public T next() {
+			if (!hasNext())
+				new NoSuchElementException();
 			prev = listIterator.next();
 			return prev;
 		}

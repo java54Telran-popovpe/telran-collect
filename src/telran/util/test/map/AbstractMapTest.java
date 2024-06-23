@@ -7,6 +7,8 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import telran.util.Map;
+import telran.util.Map.Entry;
+import telran.util.Set;
 
 abstract class  AbstractMapTest {
 	Integer[] keys = { -20, 10, 1, 100, -5 };
@@ -62,6 +64,15 @@ abstract class  AbstractMapTest {
 		assertEquals( 10, map.put(100, 0) );
 		assertEquals( 0, map.get(100) );
 		
+	}
+	
+	@Test
+	void entrySetTest() {
+		Set<Entry<Integer,Integer>> entrySet = map.entrySet();
+		assertEquals(keys.length, entrySet.size());
+		for ( int i = 0; i < keys.length; i++ ) {
+			assertTrue(entrySet.contains( new Entry<>(keys[i], null)));
+		}
 	}
 	
 }
