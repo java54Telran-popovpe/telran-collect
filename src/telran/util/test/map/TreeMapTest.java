@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import telran.util.Map.Entry;
 import telran.util.TreeMap;
 
 
@@ -23,8 +24,8 @@ class TreeMapTest extends AbstractMapTest {
 	}
 	
 	@Override
-	protected void runTest(Integer[] expectedKeys, Integer[] expectedValues) {
-		
+	@SuppressWarnings("unchecked")
+	protected void runTest(Integer[] expectedKeys, Integer[] expectedValues, Entry<Integer,Integer>[] expectedEntry) {
 		Integer[] actual = map.keySet().stream().toArray(Integer[]::new);
 		Arrays.sort(expectedKeys);
 		assertArrayEquals(expectedKeys, actual);
@@ -33,6 +34,9 @@ class TreeMapTest extends AbstractMapTest {
 		Arrays.sort(expectedValues);
 		assertArrayEquals(expectedValues, actual);
 		
+		Entry<Integer, Integer>[] actualEntries = map.entrySet().stream().toArray(Entry[]::new);
+		Arrays.sort(expectedEntry);
+		assertArrayEquals(expectedEntry, actualEntries);
 	}
 	
 	@Test

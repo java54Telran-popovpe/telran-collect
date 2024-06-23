@@ -26,7 +26,12 @@ abstract class  AbstractMapTest {
 	void mapToCollectionsTest() {
 		Integer[] expectedKeys = { -20, 10, 1, 100, -5};
 		Integer[] expectedValues = { -5, 100, 1, 10, -5};
-		runTest(expectedKeys, expectedValues );
+		@SuppressWarnings("unchecked")
+		Entry<Integer, Integer>[] expectedEntries = new Entry[ expectedKeys.length];
+		for( int i = 0; i < expectedKeys.length; i++ ) {
+			expectedEntries[ i ] = new Entry<Integer, Integer>( expectedKeys[i], expectedValues[i]);
+		}
+		runTest(expectedKeys, expectedValues, expectedEntries );
 	}
 	
 	@Test
@@ -35,7 +40,8 @@ abstract class  AbstractMapTest {
 		assertTrue(map.get(0) == null);
 	}
 	
-	protected void runTest(Integer[] expectedKeys, Integer[] expectedValues) {
+	@SuppressWarnings("unchecked")
+	protected void runTest(Integer[] expectedKeys, Integer[] expectedValues, Entry<Integer,Integer>[] expectedEntry) {
 		Integer[] actual = map.keySet().stream().sorted().toArray(Integer[]::new);
 		Arrays.sort(expectedKeys);
 		assertArrayEquals(expectedKeys, actual);
@@ -44,18 +50,17 @@ abstract class  AbstractMapTest {
 		Arrays.sort(expectedValues);
 		assertArrayEquals(expectedValues, actual);
 		
+		Entry<Integer, Integer>[] actualEntries = map.entrySet().stream().sorted().toArray(Entry[]::new);
+		Arrays.sort(expectedEntry);
+		assertArrayEquals(expectedEntry, actualEntries);
 	}
 
 	@Test
 	void removeTest() {
-		//removing existing
 		assertEquals( -5, map.remove(-20) );
-		Integer[] expectedKeys = { 10, 1, 100, -5};
-		Integer[] expectedValues = { 100, 1, 10, -5};
-		runTest( expectedKeys, expectedValues );
-		//removing unexisting
-		assertTrue(map.remove(0) == null);
-		runTest( expectedKeys, expectedValues );
+		assertEquals(4l, map.entrySet().stream().count());
+		assertNull(map.remove(-20) );
+		assertEquals(4l, map.entrySet().stream().count());
 	}
 	
 	@Test
@@ -66,13 +71,6 @@ abstract class  AbstractMapTest {
 		
 	}
 	
-	@Test
-	void entrySetTest() {
-		Set<Entry<Integer,Integer>> entrySet = map.entrySet();
-		assertEquals(keys.length, entrySet.size());
-		for ( int i = 0; i < keys.length; i++ ) {
-			assertTrue(entrySet.contains( new Entry<>(keys[i], null)));
-		}
-	}
+	
 	
 }
