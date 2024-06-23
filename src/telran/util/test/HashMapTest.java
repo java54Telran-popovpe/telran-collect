@@ -1,4 +1,4 @@
-package telran.util.test.map;
+package telran.util.test;
 
 
 import org.junit.jupiter.api.BeforeEach;
